@@ -1,50 +1,42 @@
 <template>
   <div class="home">
     <h1>Home</h1>
-    <input type="text" v-model="search" />
-    <p>search term - {{ search }}</p>
-    <div v-for="name in matchingNames" :key="name">
-      <p>{{ name }}</p>
-    </div>
-    <button @click="handleStopWatching">stop watching</button>
-    <button @click="handleStopEffect">stop effect</button>
+    <PostList v-if="showPosts" :posts="posts" />
+    <button @click="handleShowPost">toggle posts</button>
+    <button @click="posts.pop()">Delete post</button>
   </div>
 </template>
 
 <script>
 import { ref, reactive, computed, watch, watchEffect } from "vue";
-
+import PostList from "../components/PostList";
 export default {
   name: "Home",
+  components: {
+    PostList,
+  },
   setup() {
-    // computed declare un valeur calculer avec l'api composition
-    const names = ref(["anas", "anis", "didier", "paul", "jacque"]);
-    const search = ref("");
-    const stopWatch = watch(search, () => {
-      console.log("watch funciton run");
-    });
+    const posts = ref([
+      {
+        title: "Bienvenue sur le blog",
+        body: "un super blog je le jure",
+        id: 1,
+      },
+      {
+        title: "Comment faire de bonne pattes",
+        body: "avec de la bonne farine de blé",
+        id: 2,
+      },
+    ]);
+    const showPosts = ref(true);
 
-    const stopEffect = watchEffect(() => {
-      console.log("watchEffect funciton run", search.value);
-    });
-
-    const matchingNames = computed(() => {
-      return names.value.filter((name) => name.includes(search.value));
-    });
-
-    const handleStopWatching = () => {
-      stopWatch();
+    const handleShowPost = () => {
+      showPosts.value = !showPosts.value;
     };
-    const handleStopEffect = () => {
-      stopEffect();
-    };
-
     return {
-      names,
-      search,
-      matchingNames,
-      handleStopEffect,
-      handleStopWatching,
+      posts,
+      showPosts,
+      handleShowPost,
     };
   },
 };
