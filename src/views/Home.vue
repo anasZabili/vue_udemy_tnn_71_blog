@@ -1,34 +1,51 @@
 <template>
   <div class="home">
     <h1>Home</h1>
-    <h2>Refs</h2>
-    <p>{{ ninjaOne.name }} - {{ ninjaOne.age }}</p>
-    <button @click="updateNinjaOne">Update Ninja One</button>
-    <h2>Reactive</h2>
-    <p>{{ ninjaTwo.name }} - {{ ninjaTwo.age }}</p>
-    <button @click="updateNinjaTwo">Update Ninja Two</button>
+    <input type="text" v-model="search" />
+    <p>search term - {{ search }}</p>
+    <div v-for="name in matchingNames" :key="name">
+      <p>{{ name }}</p>
+    </div>
+    <button @click="handleStopWatching">stop watching</button>
+    <button @click="handleStopEffect">stop effect</button>
   </div>
 </template>
 
 <script>
-import { ref, reactive } from "vue";
+import { ref, reactive, computed, watch, watchEffect } from "vue";
 
 export default {
   name: "Home",
   setup() {
-    const ninjaOne = ref({ name: "mario", age: 30 });
-    // avantage de reactive on a plus besoin de preciser .value
-    // desavantage nous ne pouvons pas traiter les types primitve
-    // donc de façon general ref est tres largement privilegié
-    const ninjaTwo = reactive({ name: "luigi", age: 35 });
-    const updateNinjaOne = () => {
-      ninjaOne.value.age = 40;
+    // computed declare un valeur calculer avec l'api composition
+    const names = ref(["anas", "anis", "didier", "paul", "jacque"]);
+    const search = ref("");
+    const stopWatch = watch(search, () => {
+      console.log("watch funciton run");
+    });
+
+    const stopEffect = watchEffect(() => {
+      console.log("watchEffect funciton run", search.value);
+    });
+
+    const matchingNames = computed(() => {
+      return names.value.filter((name) => name.includes(search.value));
+    });
+
+    const handleStopWatching = () => {
+      stopWatch();
     };
-    const updateNinjaTwo = () => {
-      ninjaTwo.age = 45;
+    const handleStopEffect = () => {
+      stopEffect();
     };
 
-    return { ninjaOne, updateNinjaOne, ninjaTwo, updateNinjaTwo };
+    return {
+      names,
+      search,
+      matchingNames,
+      handleStopEffect,
+      handleStopWatching,
+    };
   },
 };
 </script>
