@@ -22,6 +22,9 @@ npm run build
 
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
+Start the Server:
+npx json-server --watch data/db.json
+
 composition API notes personnel:
 
 ref et reactive:

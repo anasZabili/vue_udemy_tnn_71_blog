@@ -1,42 +1,31 @@
 <template>
   <div class="home">
     <h1>Home</h1>
-    <PostList v-if="showPosts" :posts="posts" />
-    <button @click="handleShowPost">toggle posts</button>
-    <button @click="posts.pop()">Delete post</button>
+    <div v-if="error">{{ error }}</div>
+    <div v-if="posts.length && !error">
+      <PostList :posts="posts" />
+    </div>
+    <div v-else><Spinner /></div>
   </div>
 </template>
 
 <script>
 import { ref, reactive, computed, watch, watchEffect } from "vue";
 import PostList from "../components/PostList";
+import getPost from "../composable/getPosts";
+import Spinner from "../components/Spinner";
 export default {
   name: "Home",
   components: {
     PostList,
+    Spinner,
   },
   setup() {
-    const posts = ref([
-      {
-        title: "Bienvenue sur le blog",
-        body: "un super blog je le jure",
-        id: 1,
-      },
-      {
-        title: "Comment faire de bonne pattes",
-        body: "avec de la bonne farine de blé",
-        id: 2,
-      },
-    ]);
-    const showPosts = ref(true);
-
-    const handleShowPost = () => {
-      showPosts.value = !showPosts.value;
-    };
+    const { posts, error, load } = getPost();
+    load();
     return {
       posts,
-      showPosts,
-      handleShowPost,
+      error,
     };
   },
 };

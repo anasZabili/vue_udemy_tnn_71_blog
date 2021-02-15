@@ -15,7 +15,6 @@ export default {
     SinglePost,
   },
   setup(props) {
-    console.log(props.posts);
     onMounted(() => {
       console.log("components mounted");
     });
