@@ -14,6 +14,7 @@
 <script>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { projectFirestore } from "../firebase/config";
 export default {
   setup() {
     const router = useRouter();
@@ -29,17 +30,14 @@ export default {
       }
       tag.value = "";
     };
-
     const handlePost = async () => {
-      await fetch("http://localhost:3000/posts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: title.value,
-          body: body.value,
-          tags: tags.value,
-        }),
-      });
+      const posts = {
+        title: title.value,
+        body: body.value,
+        tags: tags.value,
+      };
+      const res = await projectFirestore.collection("posts").add(posts);
+
       router.push({ name: "Home" });
     };
     return { title, body, handleKeyDown, tags, tag, handlePost };
